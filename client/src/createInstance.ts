@@ -6,8 +6,8 @@ interface Points {
 }
 
 export function createInstance(startPoints: Points, instanceID: number) {
-    const ws = new WebSocket('ws://192.168.178.149:3100');
-    // const ws = new WebSocket('ws://192.168.178.35:3100');
+    //const ws = new WebSocket('ws://192.168.178.149:3100');
+    const ws = new WebSocket('ws://192.168.178.35:3100');
 
     const divX = startPoints.endX - startPoints.startX
     const divY = startPoints.endY - startPoints.startY
@@ -49,8 +49,8 @@ export function createInstance(startPoints: Points, instanceID: number) {
         points.map((point, i) => {
             setTimeout(() => {
                 ws.send(JSON.stringify({ tupel: point, id: instanceID }))
-                console.log({tupel: point, id: instanceID})
-            }, 1000*i)
+                console.log({ tupel: point, id: instanceID })
+            }, 1000 * i)
         })
     }
 }
