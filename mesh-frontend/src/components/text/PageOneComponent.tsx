@@ -1,29 +1,39 @@
 import { Typography } from '@material-ui/core';
 import { useStyles } from "./styles";
 import { PageOneProps } from '../../types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { WebsocketDataInterface } from '../../types/base'
-import { useCreatWebSocket } from '../../api/useCreatWebSocket'
-import { drawCircle } from '../../util'  
+import { useCreatWebSocket } from '../../hooks/useCreatWebSocket'
+import { drawCircle } from '../../util'
 
 export function PageOneComponent(props: PageOneProps) {
     const classes = useStyles()
-    const [points, setPoints] = useState<WebsocketDataInterface>()
+    const [vehicle, setVehicle] = useState<WebsocketDataInterface>()
+    const [currentPoints, setCurrentPoints] = useState<WebsocketDataInterface[]>([])
 
-    useCreatWebSocket(setPoints)
+    useCreatWebSocket(setVehicle)
+
+    useEffect(() => {
+        if (vehicle?.id !== undefined) {
+            if (currentPoints.find(currentPoint => currentPoint.id !== vehicle.id)) {
+                setCurrentPoints((oldPoints) => {
+                    oldPoints[vehicle.id] = vehicle
+                    return oldPoints
+                })
+            } else {
+                setCurrentPoints([...currentPoints, vehicle])
+            }
+        }
+    }, [vehicle])
+
     setTimeout(() => {
-        drawCircle(points?.tupel.x, points?.tupel.y)    
+        drawCircle(currentPoints)
     }, 1000);
-
 
     return (
         <div className={classes.root}>
             <Typography>
                 <h1>Page One</h1>
-                <p>Hier steht ein Text</p>
-                <p>{props.data}</p>
-                <p>X: {points?.tupel.x}</p>
-                <p>Y: {points?.tupel.y}</p>
             </Typography>
             <div className={classes.container} id="container"></div>
         </div>
