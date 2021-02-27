@@ -1,0 +1,23 @@
+.App {
+  text-align: center;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.Container {
+  display: flex;
+  flex-direction: column;
+}
+
+#button {
+  padding: 5px;
+  width: min-content;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#numbInstances {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
