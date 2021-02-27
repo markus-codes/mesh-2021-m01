@@ -6,8 +6,8 @@ interface Points {
 }
 
 export function createInstance(startPoints: Points, instanceID: number) {
-    //const ws = new WebSocket('ws://192.168.178.149:3100');
-    const ws = new WebSocket('ws://192.168.178.35:3100');
+    const ws = new WebSocket('ws://192.168.178.149:3100/send');
+    // const ws = new WebSocket('ws://192.168.178.35:3100');
 
     const divX = startPoints.endX - startPoints.startX
     const divY = startPoints.endY - startPoints.startY
@@ -17,10 +17,9 @@ export function createInstance(startPoints: Points, instanceID: number) {
     let y = 0
     let nextPointX = 0
     let nextPointY = 0
-
     const points = new Array(amountSteps + 1 < 0 ? (amountSteps + 1) * -1 : amountSteps + 1)
-    for (let i = 0; i < points.length; i++) {
 
+    for (let i = 0; i < points.length; i++) {
         if (divX > 0 && divY > 0) {
             nextPointX = startPoints.startX + i
             nextPointY = startPoints.startY + i
@@ -35,13 +34,12 @@ export function createInstance(startPoints: Points, instanceID: number) {
             nextPointY = startPoints.startY - i
         }
 
-        if (nextPointX <= startPoints.endX && divX > 0 || nextPointX >= startPoints.endX && divX < 0) {
+        if ((nextPointX <= startPoints.endX && divX > 0) || (nextPointX >= startPoints.endX && divX < 0)) {
             x = nextPointX
         }
-        if (nextPointY <= startPoints.endY && divY > 0 || nextPointY >= startPoints.endY && divY < 0) {
+        if ((nextPointY <= startPoints.endY && divY > 0) || (nextPointY >= startPoints.endY && divY < 0)) {
             y = nextPointY
         }
-
         points[i] = { x: x, y: y }
     }
 
@@ -53,4 +51,6 @@ export function createInstance(startPoints: Points, instanceID: number) {
             }, 1000 * i)
         })
     }
+
+    return ws
 }
