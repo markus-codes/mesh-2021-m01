@@ -1,5 +1,5 @@
-import { Tupel } from "./models/tupel";
-import { Vehicle } from "./models/vehicle";
+import { Tupel } from './models/tupel';
+import { Vehicle } from './models/vehicle';
 
 export class Grid {
   private grid: Vehicle[][][];
@@ -33,16 +33,8 @@ export class Grid {
     var columnLimit = this.grid[0].length - 1;
     let result = this.grid[tupel.x][tupel.y];
 
-    for (
-      var i = Math.max(0, tupel.x - 1);
-      i <= Math.min(tupel.x + 1, rowLimit);
-      i++
-    ) {
-      for (
-        var j = Math.max(0, tupel.y - 1);
-        j <= Math.min(tupel.y + 1, columnLimit);
-        j++
-      ) {
+    for (var i = Math.max(0, tupel.x - 1); i <= Math.min(tupel.x + 1, rowLimit); i++) {
+      for (var j = Math.max(0, tupel.y - 1); j <= Math.min(tupel.y + 1, columnLimit); j++) {
         if (i !== tupel.x || j !== tupel.y) {
           result = [...result, ...this.grid[i][j]];
         }

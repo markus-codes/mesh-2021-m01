@@ -1,4 +1,4 @@
-import { Tupel } from "./tupel";
+import { Tupel } from './tupel';
 
 export interface InboundTupel {
   id: number;

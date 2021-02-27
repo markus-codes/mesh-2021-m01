@@ -1,9 +1,9 @@
-import { createServer, IncomingMessage, Server } from "http";
-import * as WebSocket from "ws";
-import { Grid } from "./grid";
-import { InboundTupel } from "./models/inbound-tupel.model";
-import { Tupel } from "./models/tupel";
-import { Vehicle } from "./models/vehicle";
+import { createServer, IncomingMessage, Server } from 'http';
+import * as WebSocket from 'ws';
+import { Grid } from './grid';
+import { InboundTupel } from './models/inbound-tupel.model';
+import { Tupel } from './models/tupel';
+import { Vehicle } from './models/vehicle';
 export class App {
   private httpServer: Server;
   private sendSocket: WebSocket.Server;
@@ -16,7 +16,7 @@ export class App {
     this.grid = new Grid(10, 10);
     this.httpServer = createServer();
     this.sendSocket = new WebSocket.Server({
-      server: this.httpServer,
+      server: this.httpServer
     });
     this.bootstrapSockets();
   }
@@ -27,7 +27,7 @@ export class App {
    * @param port port to listen
    * @param host host to bind server
    */
-  start(port: number, host = "0.0.0.0"): void {
+  start(port: number, host = '0.0.0.0'): void {
     this.httpServer.listen(port, host, () => {
       console.log(`Listen on ${host}:${port}`);
     });
@@ -37,16 +37,13 @@ export class App {
    * Register listener to recive messages
    */
   private bootstrapSockets(): void {
-    this.sendSocket.on(
-      "connection",
-      (socket: WebSocket, request: IncomingMessage) => {
-        if (request.url === "/send") {
-          this.registerSendSocket(socket);
-        } else if (request.url === "/subscribe") {
-          this.registerSubsribeSocket(socket);
-        }
+    this.sendSocket.on('connection', (socket: WebSocket, request: IncomingMessage) => {
+      if (request.url === '/send') {
+        this.registerSendSocket(socket);
+      } else if (request.url === '/subscribe') {
+        this.registerSubsribeSocket(socket);
       }
-    );
+    });
   }
 
   /**
@@ -55,16 +52,16 @@ export class App {
    * @param socket socket to handle
    */
   private registerSendSocket(socket: WebSocket): void {
-    socket.on("message", (data: any) => {
+    socket.on('message', (data: any) => {
       try {
         const request = JSON.parse(data) as InboundTupel;
         this.addTupelToInstance(request.id, request.tupel);
         this.sendToAllSubscribers(request);
         socket.send(JSON.stringify({ success: true }));
       } catch (exp) {
-        console.error("Recived invalid request", exp.message);
+        console.error('Recived invalid request', exp.message);
         console.log(exp);
-        socket.send(JSON.stringify({ success: false, status: "400" }));
+        socket.send(JSON.stringify({ success: false, status: '400' }));
       }
     });
   }
@@ -117,14 +114,12 @@ export class App {
         id: instanceId,
         currentGrid: grid,
         currentLocation: tuple,
-        isFine: false,
+        isFine: false
       };
       this.instances.set(instanceId, vehicle);
       this.grid.updateLocation(vehicle, grid);
     }
-    const neighbors = this.grid
-      .findingNeighbors(grid)
-      .filter((v) => v.currentLocation != tuple);
+    const neighbors = this.grid.findingNeighbors(grid).filter((v) => v.currentLocation != tuple);
 
     neighbors.forEach((vehicle) => {
       const distance = this.getDistance(vehicle.currentLocation, tuple);
