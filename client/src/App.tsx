@@ -19,13 +19,28 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <h1>Client-App</h1>
-      <div className="Container">
-        <p>How many items do you want to start?</p>
-        <input type="number" name="name" id='numbInstances' onChange={(event) => handleChange(event)} />
-        <input className='button' type="button" value="Submit" onClick={() => handleSubmit()} />
-        <p>Total amount of instances running: {instances.length}.</p>
+    <div className="app">
+      <div className="container">
+        <div className="card">
+          <h1>Clients Simulator</h1>
+          <p>This application can simulate a specific number of clients. Each client represents a vehicle. How many items do you want to start?</p>
+          <div className="form-group">
+            <input type="number" name="name" autoComplete="off" className="form-control" min="0" max="5" onChange={(event) => handleChange(event)} />
+          </div>
+          <button type="button" className='button' onClick={() => handleSubmit()}>
+            Start Simulation
+          </button>
+
+          { instancesRunning && 
+            <p>
+              Instances running:
+              <span className="count">
+                {instances.length}
+              </span>
+            </p>
+          }
+
+        </div>
       </div>
     </div>
   );
