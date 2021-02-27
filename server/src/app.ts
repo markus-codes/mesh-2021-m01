@@ -55,8 +55,8 @@ export class App {
     socket.on('message', (data: any) => {
       try {
         const request = JSON.parse(data) as InboundTupel;
-        this.addTupelToInstance(request.id, request.tupel);
-        this.sendToAllSubscribers(request);
+        const vehicle = this.addTupelToInstance(request.id, request.tupel);
+        this.sendToAllSubscribers(vehicle);
         socket.send(JSON.stringify({ success: true }));
       } catch (exp) {
         console.error('Recived invalid request', exp.message);
@@ -99,36 +99,37 @@ export class App {
    * Creates or append a tupel for an specific instance
    *
    * @param instanceId id of instance
-   * @param tuple tupel to add
+   * @param location tupel to add
    */
-  private addTupelToInstance(instanceId: number, tuple: Tupel): void {
-    const grid = this.calculateGrid(tuple);
+  private addTupelToInstance(instanceId: number, location: Tupel): Vehicle {
+    const grid = this.calculateGrid(location);
+    let instance: Vehicle;
     if (this.instances.has(instanceId)) {
-      const currentValue = this.instances.get(instanceId);
-      currentValue.currentGrid = grid;
-      currentValue.currentLocation = tuple;
-      this.instances.set(instanceId, currentValue);
-      this.grid.updateLocation(currentValue, grid);
+      instance = this.instances.get(instanceId);
     } else {
-      const vehicle: Vehicle = {
+      instance = {
         id: instanceId,
         currentGrid: grid,
-        currentLocation: tuple,
+        currentLocation: location,
         isFine: false
       };
-      this.instances.set(instanceId, vehicle);
-      this.grid.updateLocation(vehicle, grid);
     }
-    const neighbors = this.grid.findingNeighbors(grid).filter((v) => v.currentLocation != tuple);
+    instance.currentGrid = grid;
+    instance.currentLocation = location;
+    this.grid.updateLocation(instance, grid);
 
+    const neighbors = this.grid.findingNeighbors(grid).filter((v) => v.currentLocation != location);
     neighbors.forEach((vehicle) => {
-      const distance = this.getDistance(vehicle.currentLocation, tuple);
+      const distance = this.getDistance(vehicle.currentLocation, location);
       if (distance > 1.5) {
-        // TODO: Distance is fine
+        instance.isFine = true;
       } else {
-        // TODO: Distance to
+        instance.isFine = false;
       }
     });
+
+    this.instances.set(instanceId, instance);
+    return instance;
   }
 
   /**
