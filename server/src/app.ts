@@ -1,15 +1,19 @@
 import { createServer, IncomingMessage, Server } from "http";
 import * as WebSocket from "ws";
+import { Grid } from "./grid";
 import { InboundTupel } from "./models/inbound-tupel.model";
 import { Tupel } from "./models/tupel";
+import { Vehicle } from "./models/vehicle";
 export class App {
   private httpServer: Server;
   private sendSocket: WebSocket.Server;
 
-  private instances: Map<number, Tupel[]> = new Map();
+  private instances: Map<number, Vehicle> = new Map();
   private subscribers: WebSocket[] = [];
+  private grid: Grid;
 
   constructor() {
+    this.grid = new Grid(10, 10);
     this.httpServer = createServer();
     this.sendSocket = new WebSocket.Server({
       server: this.httpServer,
@@ -59,6 +63,7 @@ export class App {
         socket.send(JSON.stringify({ success: true }));
       } catch (exp) {
         console.error("Recived invalid request", exp.message);
+        console.log(exp);
         socket.send(JSON.stringify({ success: false, status: "400" }));
       }
     });
@@ -85,18 +90,61 @@ export class App {
   }
 
   /**
+   * Calculate the grid for an tupel
+   *
+   * @param tupel tuple to calculate the grid for
+   */
+  private calculateGrid(tupel: Tupel): Tupel {
+    return { x: Math.floor(tupel.x / 10), y: Math.floor(tupel.y / 10) };
+  }
+
+  /**
    * Creates or append a tupel for an specific instance
    *
    * @param instanceId id of instance
-   * @param tupel tupel to add
+   * @param tuple tupel to add
    */
-  private addTupelToInstance(instanceId: number, tupel: Tupel): void {
+  private addTupelToInstance(instanceId: number, tuple: Tupel): void {
+    const grid = this.calculateGrid(tuple);
     if (this.instances.has(instanceId)) {
       const currentValue = this.instances.get(instanceId);
-      currentValue.push(tupel);
+      currentValue.currentGrid = grid;
+      currentValue.currentLocation = tuple;
       this.instances.set(instanceId, currentValue);
+      this.grid.updateLocation(currentValue, grid);
     } else {
-      this.instances.set(instanceId, [tupel]);
+      const vehicle: Vehicle = {
+        id: instanceId,
+        currentGrid: grid,
+        currentLocation: tuple,
+        isFine: false,
+      };
+      this.instances.set(instanceId, vehicle);
+      this.grid.updateLocation(vehicle, grid);
     }
+    const neighbors = this.grid
+      .findingNeighbors(grid)
+      .filter((v) => v.currentLocation != tuple);
+
+    neighbors.forEach((vehicle) => {
+      const distance = this.getDistance(vehicle.currentLocation, tuple);
+      if (distance > 1.5) {
+        // TODO: Distance is fine
+      } else {
+        // TODO: Distance to
+      }
+    });
+  }
+
+  /**
+   * Calculates the distance between two points
+   *
+   * @param a coordinates of point a
+   * @param b coordinates of point b
+   */
+  private getDistance(a: Tupel, b: Tupel): number {
+    const x = a.x - b.x;
+    const y = a.y - b.y;
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 }
