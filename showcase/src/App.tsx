@@ -1,12 +1,12 @@
 import './App.css';
 import { useEffect, useState } from 'react'
-import { WebsocketDataInterface } from './types/base'
+import { VehicleInterface } from './types/base'
 import { useCreatWebSocket } from './hooks/useCreatWebSocket'
 import { Stage, Layer, Circle } from 'react-konva'
 
 function App() {
-  const [vehicle, setVehicle] = useState<WebsocketDataInterface>()
-  const [currentPoints, setCurrentPoints] = useState<WebsocketDataInterface[]>([])
+  const [vehicle, setVehicle] = useState<VehicleInterface>()
+  const [currentPoints, setCurrentPoints] = useState<VehicleInterface[]>([])
 
   useCreatWebSocket(setVehicle)
 
@@ -29,7 +29,9 @@ function App() {
       <div className={'container'}>
         <Stage width={400} height={400}>
           <Layer>
-            {currentPoints.map(point => <Circle x={point.tupel.x * 4} y={point.tupel.y * 4} stroke="black" fill='red' radius={2 * 4} />)}   
+            {currentPoints.map((point, i) =>
+              <Circle key={i} x={point.currentLocation.x * 4} y={point.currentLocation.y * 4} stroke="black" fill={point.isFine ? 'green' : 'red'} radius={2 * 4} />)
+            }
           </Layer>
         </Stage>
       </div>
