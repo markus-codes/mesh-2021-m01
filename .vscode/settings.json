@@ -5,5 +5,5 @@
         "source.organizeImports": true
     },
     "editor.rulers": [100],
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
 }
