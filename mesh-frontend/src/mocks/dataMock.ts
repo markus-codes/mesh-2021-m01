@@ -1,0 +1,1 @@
+export const dataMock = 'Data 1'
