@@ -1,6 +1,6 @@
-import React from 'react'
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import React from 'react';
 import '../App.css';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 const containerStyle = {
   width: '800px',
@@ -12,8 +12,30 @@ const containerStyle = {
 
 const center = {
   lat: 40.737344,
-  lng: -73.992677
+  lng: -73.99267
 };
+
+const customMapOptions: google.maps.MapTypeStyle[] =
+  [
+    {
+      featureType: "all",
+      elementType: "labels.text",
+      stylers: [
+        {
+          visibility: "off"
+        }
+      ]
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.icon",
+      stylers: [
+        {
+          visibility: "off"
+        }
+      ]
+    }
+  ]
 
 function GoogleMapsSim() {
   const { isLoaded } = useJsApiLoader({
@@ -39,11 +61,14 @@ function GoogleMapsSim() {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={15}
+        zoom={16}
         onLoad={onLoad}
         onUnmount={onUnmount}
+        options={{
+          disableDefaultUI: true, styles: customMapOptions
+        }}
       >
-        { /* Child components, such as markers, info windows, etc. */}
+        <Marker position={center} />
         <></>
       </GoogleMap>
     </div>
