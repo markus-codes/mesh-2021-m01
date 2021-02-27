@@ -1,10 +1,12 @@
 import { createServer, Server } from "http";
 import * as WebSocket from "ws";
 import { InboundTupel } from "./models/inbound-tupel.model";
+import { Tupel } from "./models/tupel";
 
 export class App {
   private httpServer: Server;
   private socketServer: WebSocket.Server;
+  private instances: Map<number, Tupel[]> = new Map();
 
   constructor() {
     this.httpServer = createServer();
@@ -31,13 +33,30 @@ export class App {
     this.socketServer.on("connection", (socket: WebSocket) => {
       socket.on("message", (data: any) => {
         try {
-          const parsedObject = JSON.parse(data) as InboundTupel;
-          socket.send({ success: true });
+          const request = JSON.parse(data) as InboundTupel;
+          this.addTupelToInstance(request.id, request.tupel);
+          socket.send(JSON.stringify({ success: true }));
         } catch (exp) {
-          console.error("Recived invalid request");
-          socket.send({ success: false, status: "400" });
+          console.error("Recived invalid request", exp.message);
+          socket.send(JSON.stringify({ success: false, status: "400" }));
         }
       });
     });
+  }
+
+  /**
+   * Creates or append a tupel for an specific instance
+   *
+   * @param instanceId id of instance
+   * @param tupel tupel to add
+   */
+  private addTupelToInstance(instanceId: number, tupel: Tupel): void {
+    if (this.instances.has(instanceId)) {
+      const currentValue = this.instances.get(instanceId);
+      currentValue.push(tupel);
+      this.instances.set(instanceId, currentValue);
+    } else {
+      this.instances.set(instanceId, [tupel]);
+    }
   }
 }
