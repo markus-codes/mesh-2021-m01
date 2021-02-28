@@ -1,21 +1,21 @@
+import { useEffect, useState } from 'react';
+import { Circle, Layer, Line, Stage } from 'react-konva';
 import '../App.css';
-import { useEffect, useState } from 'react'
-import { VehicleInterface } from '../types/base'
-import { useCreatWebSocket } from '../hooks/useCreatWebSocket'
-import { Stage, Layer, Circle, Line } from 'react-konva'
+import { useCreatWebSocket } from '../hooks/useCreatWebSocket';
+import { VehicleInterface } from '../types/base';
 
 function StaticSim() {
   const [vehicle, setVehicle] = useState<VehicleInterface>()
   const [currentPoints, setCurrentPoints] = useState<VehicleInterface[]>([])
 
-  const width= 400 
-  const height= 400
+  const width = 400
+  const height = 400
 
   useCreatWebSocket(setVehicle)
 
   useEffect(() => {
     if (vehicle?.id !== undefined) {
-      if (currentPoints.find(currentPoint => currentPoint.id !== vehicle.id)) {
+      if (currentPoints.indexOf(vehicle) === -1) {
         setCurrentPoints((oldPoints) => {
           oldPoints[vehicle.id] = vehicle
           return oldPoints

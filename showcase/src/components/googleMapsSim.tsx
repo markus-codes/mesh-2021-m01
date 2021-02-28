@@ -1,7 +1,8 @@
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import '../App.css';
-import * as coordinates from '../mock/coordinates.json';
+import { useCreatWebSocket } from '../hooks/useCreatWebSocket';
+import { VehicleInterface } from '../types/base';
 
 const containerStyle = {
   width: '800px',
@@ -34,23 +35,19 @@ const customMapOptions: google.maps.MapTypeStyle[] =
   ]
 
 function GoogleMapsSim() {
-  let markers: google.maps.Marker[]
   const center = { lat: 40.737344, lng: -73.99267 }
-
-  const [map, setMap] = useState()
-  let currentPoints: { x: number, y: number }[]
-
-  for (let i = 0; i < coordinates[0].length; i++) {
-    setTimeout(() => {
-      currentPoints = [coordinates[0][i], coordinates[0][i + 1]]
-      updateMarker()
-    }, 2000 * i)
-  }
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: "AIzaSyAgoecKIEYU9ADNWQJTXfXNMeo8JzCcKEY"
   })
+
+  const [map, setMap] = useState()
+  const [vehicle, setVehicle] = useState<VehicleInterface>()
+  const [currentPoints, setCurrentPoints] = useState<VehicleInterface[]>([])
+  const [markers, setMarkers] = useState<google.maps.Marker[]>()
+
+  useCreatWebSocket(setVehicle)
 
   const onLoad = useCallback(function callback(map) {
     setMap(map)
@@ -58,23 +55,35 @@ function GoogleMapsSim() {
 
   const updateMarker = () => {
     if (map) {
-      typeof (markers) !== 'undefined' && clearMarkers(markers)
-      markers = currentPoints.map((coordinat, i) => createMarker({ lat: coordinat?.x, lng: coordinat?.y }, map))
+      clearMarkers(markers)
+      setMarkers(currentPoints.map((coordinat, i) => createMarker({ lat: coordinat.currentLocation.x, lng: coordinat.currentLocation.y }, map)))
     }
   }
 
-  function createMarker(position: any, map: any) {
+  const createMarker = (position: any, map: any) => {
     return new window.google.maps.Marker({
       position: position,
       map: map
     });
   }
 
-  function clearMarkers(markers: any) {
-    for (let m of markers) {
-      m.setMap(null);
-    }
+  const clearMarkers = (markers: any) => {
+    markers?.map((marker: { setMap: (arg0: null) => any; }) => marker.setMap(null))
   }
+
+  useEffect(() => {
+    if (vehicle?.id !== undefined) {
+      if (currentPoints.indexOf(vehicle) === -1) {
+        setCurrentPoints((oldPoints) => {
+          oldPoints[vehicle.id] = vehicle
+          return oldPoints
+        })
+      } else {
+        setCurrentPoints([...currentPoints, vehicle])
+      }
+      updateMarker()
+    }
+  }, [vehicle, currentPoints])
 
   return isLoaded ? (
     <div className={'App'}>
@@ -82,7 +91,7 @@ function GoogleMapsSim() {
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={15}
+        zoom={2}
         onLoad={onLoad}
         options={{
           disableDefaultUI: true, styles: customMapOptions

@@ -1,12 +1,12 @@
 import GoogleMapsSim from './components/googleMapsSim';
-import StaticSim from './components/staticSim';
+// import StaticSim from './components/staticSim';
 
 function App() {
 
     return (
         <>
             <GoogleMapsSim />
-            <StaticSim />
+            {/* <StaticSim /> */}
         </>
     )
 }
