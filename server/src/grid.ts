@@ -28,7 +28,7 @@ export class Grid {
    *
    * @param tupel coordinates of field in grid
    */
-  findingNeighbors(tupel: Tupel): Vehicle[] {
+  findNeighbors(tupel: Tupel): Vehicle[] {
     var rowLimit = this.grid.length - 1;
     var columnLimit = this.grid[0].length - 1;
     let result = this.grid[tupel.x][tupel.y];
