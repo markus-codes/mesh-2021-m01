@@ -6,7 +6,7 @@ Warum ist SAFE RIDE in Zukunft unabdingbar im Straßenverkehr?Alleine im Jahr201
 
 ## Presentation Assets
 
-- [Fact Sheet (Motivationsschreiben)](pitch-deck/Präsentation-Safe-Ride.pptx)
+- [Fact Sheet (Motivationsschreiben)](pitch-deck/Motivation-SAFE-RIDE.pdf)
 - [Slide Deck](pitch-deck/Präsentation-Safe-Ride.pptx)
 - [Adobe XD Prototype](https://xd.adobe.com/view/ce058d7b-278f-4299-aec2-e51c1cc28d0c-9b56/?fullscreen)
 
