@@ -1,7 +1,10 @@
+import * as dotenv from "dotenv";
 const routes = require("./data/routes.json");
 
+dotenv.config();
+
 export const loadRoutes = () => {
-  const socket = new WebSocket("ws://192.168.178.149:3100/send");
+  const socket = new WebSocket(process.env.REACT_APP_SERVER_URL + "/send");
   const routeCount = routes.length;
   socket.onopen = function () {
     for (let i = 0; i < 6; i++) {
