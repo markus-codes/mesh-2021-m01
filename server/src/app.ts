@@ -10,7 +10,7 @@ export class App {
   private readonly twoDemensionalProcessor: LocationProcessor;
 
   constructor() {
-    this.twoDemensionalProcessor = new LocationProcessor(10);
+    this.twoDemensionalProcessor = new LocationProcessor();
     this.httpServer = createServer();
     this.sendSocket = new WebSocket.Server({
       server: this.httpServer
@@ -52,6 +52,8 @@ export class App {
     socket.on('message', (data: any) => {
       try {
         const request = JSON.parse(data) as InboundTupel;
+        console.log(request);
+
         const vehicle = this.twoDemensionalProcessor.process(request.id, request.tupel);
         this.sendToAllSubscribers(vehicle);
         socket.send(JSON.stringify({ success: true }));
