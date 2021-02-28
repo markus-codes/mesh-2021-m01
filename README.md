@@ -1,6 +1,6 @@
 # Save Ride
 
-<p class="text-align: center">
+<p align="center">
     <img src="./client/public/logo192.png">
     Kommunikation anstatt Kollision
 </p>
