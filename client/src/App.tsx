@@ -19,7 +19,8 @@ function App() {
           <h1>Clients Simulator</h1>
           <p>
             This application can simulate a specific number of clients. Each
-            client represents a vehicle.
+            client represents a vehicle. You can start only one instance per browser window. 
+            For a reset reload the window.
           </p>
 
         {! instancesRunning &&  <button type="button" className="button" onClick={() => start()}>
